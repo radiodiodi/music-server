@@ -95,8 +95,8 @@ const traverseDirectoryAndSave = async p => {
   }
 };
 
-const run = () => {
-  traverseDirectoryAndSave(dir);
+const run = async () => {
+  await traverseDirectoryAndSave(dir);
 }
 
 module.exports = {

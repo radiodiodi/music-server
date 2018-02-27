@@ -13,9 +13,6 @@ const limit = require('koa-limit');
 const app = new Koa();
 const router = new Router();
 
-parser.run();
-watcher();
-
 const stripFields = data => {
   return {
     title: data.title,
@@ -76,7 +73,11 @@ app.use(async (ctx, next) => {
   }
 });
 
-app
+const start = async () => {
+  await parser.run();
+  watcher();
+
+  app
   .use(limit({
     /* One query per second */
     limit: 1,
@@ -86,4 +87,9 @@ app
     })
   }))
   .use(router.routes())
-  .listen(8888);
+  .listen(process.env.HOST);
+
+  console.log(`Music server API listening at http://${process.env.HOST}.`);
+}
+
+start();
