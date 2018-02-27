@@ -36,7 +36,7 @@ router.get('/artist/:artist', async ctx => {
   const artist = ctx.params.artist;
   utils.info(`Querying for artist "${artist}".`)
   const data = await models.library.find({
-    artist,
+    artist: new RegExp(artist, 'i')
   }, { limit: 50 });
   ctx.body = JSON.stringify({
     results: data.map(song => stripFields(song))
@@ -48,7 +48,7 @@ router.get('/title/:title', async ctx => {
   const title = ctx.params.title;
   utils.info(`Querying for title "${title}".`)
   const data = await models.library.find({
-    title,
+    title: new RegExp(title, 'i')
   }, { limit: 50 });
   ctx.body = JSON.stringify({
     results: data.map(song => stripFields(song))
@@ -60,7 +60,7 @@ router.get('/album/:album', async ctx => {
   const album = ctx.params.album;
   utils.info(`Querying for album "${album}".`)
   const data = await models.library.find({
-    album,
+    album: new RegExp(album, 'i'),
   }, { limit: 50 });
   ctx.body = JSON.stringify({
     results: data.map(song => stripFields(song))
