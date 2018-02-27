@@ -9,9 +9,12 @@ const utils = require('./utils');
 const Koa = require('koa');
 const Router = require('koa-router');
 const limit = require('koa-limit');
+const cors = require('koa-cors');
 
 const app = new Koa();
 const router = new Router();
+
+const FRONTEND_URL = process.env.FRONTEND_URL;
 
 const stripFields = data => {
   return {
@@ -23,34 +26,46 @@ const stripFields = data => {
 
 router.get('/', async ctx => {
   const data = await models.library.find({}, { limit: 50 });
-  ctx.body = JSON.stringify(data.map(song => stripFields(song)));
+  ctx.body = JSON.stringify({
+    results: data.map(song => stripFields(song))
+  });
+  ctx.type = 'application/json';
 });
 
 router.get('/artist/:artist', async ctx => {
   const artist = ctx.params.artist;
   utils.info(`Querying for artist "${artist}".`)
-  const data = await models.library.findOne({
+  const data = await models.library.find({
     artist,
-  });
-  ctx.body = JSON.stringify(stripFields(data));
+  }, { limit: 50 });
+  ctx.body = JSON.stringify({
+    results: data.map(song => stripFields(song))
+  });  
+  ctx.type = 'application/json';
 });
 
 router.get('/title/:title', async ctx => {
   const title = ctx.params.title;
   utils.info(`Querying for title "${title}".`)
-  const data = await models.library.findOne({
+  const data = await models.library.find({
     title,
-  });
-  ctx.body = JSON.stringify(stripFields(data));
+  }, { limit: 50 });
+  ctx.body = JSON.stringify({
+    results: data.map(song => stripFields(song))
+  });  
+  ctx.type = 'application/json';
 });
 
 router.get('/album/:album', async ctx => {
   const album = ctx.params.album;
   utils.info(`Querying for album "${album}".`)
-  const data = await models.library.findOne({
+  const data = await models.library.find({
     album,
+  }, { limit: 50 });
+  ctx.body = JSON.stringify({
+    results: data.map(song => stripFields(song))
   });
-  ctx.body = JSON.stringify(stripFields(data));
+  ctx.type = 'application/json';
 });
 
 // x-response-time
@@ -80,13 +95,17 @@ const start = async () => {
   app
   .use(limit({
     /* One query per second */
-    limit: 1,
-    interval: 1000, // ms,
+    limit: 5,
+    interval: 5000, // ms,
     message: JSON.stringify({
       error: 'Throttled',
     })
   }))
+  .use(cors({
+    origin: FRONTEND_URL,
+  }))
   .use(router.routes())
+  .use(router.allowedMethods())
   .listen(process.env.HOST);
 
   console.log(`Music server API listening at http://${process.env.HOST}.`);
