@@ -88,9 +88,8 @@ app.use(async (ctx, next) => {
   }
 });
 
-const start = async () => {
-  await parser.run();
-  watcher();
+parser.run();
+watcher();
 
 app
   .use(cors({
@@ -108,7 +107,4 @@ app
   .use(router.allowedMethods())
   .listen(process.env.HOST);
 
-  console.log(`Music server API listening at http://${process.env.HOST}.`);
-}
-
-start();
+console.log(`Music server API listening at http:\/\/${process.env.HOST}:${process.env.PORT}.`);
