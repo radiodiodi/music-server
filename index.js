@@ -92,7 +92,10 @@ const start = async () => {
   await parser.run();
   watcher();
 
-  app
+app
+  .use(cors({
+    origin: FRONTEND_URL,
+  }))
   .use(limit({
     /* One query per second */
     limit: 5,
@@ -100,9 +103,6 @@ const start = async () => {
     message: JSON.stringify({
       error: 'Throttled',
     })
-  }))
-  .use(cors({
-    origin: FRONTEND_URL,
   }))
   .use(router.routes())
   .use(router.allowedMethods())
