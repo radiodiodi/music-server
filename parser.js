@@ -22,7 +22,6 @@ const saveMetadataToCollection = async (data, pathToFile) => {
 const parseAndSaveMetadata = async p => {
   const existing = await models.library.findOne({ filePath: p });
   if (existing) {
-    utils.info(`File "${p}" already in DB. Skipping...`);
     return;
   }
 
