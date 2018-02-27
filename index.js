@@ -105,6 +105,6 @@ app
   }))
   .use(router.routes())
   .use(router.allowedMethods())
-  .listen(process.env.HOST);
+  .listen(process.env.PORT, process.env.HOST);
 
 console.log(`Music server API listening at http:\/\/${process.env.HOST}:${process.env.PORT}.`);
