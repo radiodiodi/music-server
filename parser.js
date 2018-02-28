@@ -1,4 +1,5 @@
-var mm = require('musicmetadata');
+require('dotenv').config();
+const mm = require('musicmetadata');
 const fs = require('fs');
 
 const models = require('./models');
@@ -25,7 +26,7 @@ const parseAndSaveMetadata = async p => {
     return;
   }
 
-  const parser = mm(fs.createReadStream(p), (err, metadata) => {
+  const parser = mm(fs.createReadStream(p), async (err, metadata) => {
     utils.info(`Parsing data from: ${p}`)
     if (err) {
       utils.warning(`Error parsing file ${p}. Skipping...`);

@@ -88,7 +88,6 @@ app.use(async (ctx, next) => {
   }
 });
 
-parser.run();
 watcher();
 
 app
