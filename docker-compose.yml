@@ -1,19 +1,5 @@
 version: '2'
 services:
-    radiodiodi2018:
-        build: .
-        container_name: "radiodiodi2018"
-        environment:
-            - NODE_ENV=development
-        volumes:
-            - .:/app
-        ports:
-            - 8080:8080
-        links:
-            - mongodb
-        depends_on:
-            - mongodb
-        command: yarn start
     mongodb:
         image: mongo:latest
         container_name: "mongodb"
