@@ -34,9 +34,14 @@ const parseAndSaveMetadata = async p => {
     }
     
     const { albumartist, ...withoutAlbumArtist } = metadata;
+
+    const artist = metadata.artist === metadata.albumartist 
+      ? metadata.artist
+      : [].concat(metadata.artist || [], metadata.albumartist || []);
+
     const data = { 
       ...withoutAlbumArtist,
-      artist: [].concat(metadata.artist || [], metadata.albumartist || []),
+      artist,
     };
   
     saveMetadataToCollection(data, p);
