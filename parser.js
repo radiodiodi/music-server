@@ -20,6 +20,8 @@ const saveMetadataToCollection = async (data, pathToFile) => {
   }, { upsert: true });
 }
 
+const lowercaseEqual = (a1, a2) => a1.join(', ').trim().toLowerCase() === a2.join(', ').trim().toLowerCase();
+
 const parseAndSaveMetadata = async p => {
   const existing = await models.library.findOne({ filePath: p });
   if (existing) {
@@ -35,7 +37,7 @@ const parseAndSaveMetadata = async p => {
     
     const { albumartist, ...withoutAlbumArtist } = metadata;
 
-    const artist = metadata.artist === metadata.albumartist 
+    const artist = lowercaseEqual(metadata.artist, metadata.albumartist)
       ? metadata.artist
       : [].concat(metadata.artist || [], metadata.albumartist || []);
 
