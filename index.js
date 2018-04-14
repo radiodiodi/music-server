@@ -27,7 +27,7 @@ router.get('/artist/:artist', async ctx => {
   utils.info(`Querying for artist "${artist}".`)
   const data = await Song.byArtist(artist);
   ctx.body = JSON.stringify({
-    results: [data],
+    results: data,
   });  
   ctx.type = 'application/json';
 });

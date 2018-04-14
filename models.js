@@ -42,7 +42,12 @@ class Song {
   static async byTitle(value) {
     const conn = await connect();
     try {
-      return await conn.query('SELECT title, artist, album FROM songs WHERE title LIKE ? LIMIT 50', `%${value}%`);
+      const results = await conn.query('SELECT title, artist, album FROM songs WHERE title LIKE ? LIMIT 50', `%${value}%`);
+      return results.map(r => ({
+        title: r.title,
+        artist: [ r.artist ],
+        album: r.album,
+      }));
     } catch (error) {
       throw error;
     }
@@ -55,7 +60,12 @@ class Song {
   static async byArtist(value) {
     const conn = await connect();
     try {
-      return await conn.query('SELECT title, artist, album FROM songs WHERE artist LIKE ? LIMIT 50', `%${value}%`);
+      const results = await conn.query('SELECT title, artist, album FROM songs WHERE artist LIKE ? LIMIT 50', `%${value}%`);
+      return results.map(r => ({
+        title: r.title,
+        artist: [ r.artist ],
+        album: r.album,
+      }));
     } catch (error) {
       throw error;
     }
@@ -68,7 +78,12 @@ class Song {
   static async byAlbum(value) {
     const conn = await connect();
     try {
-      return await conn.query('SELECT title, artist, album FROM songs WHERE album LIKE ? LIMIT 50', `%${value}%`);
+      const results = await conn.query('SELECT title, artist, album FROM songs WHERE album LIKE ? LIMIT 50', `%${value}%`);
+      return results.map(r => ({
+        title: r.title,
+        artist: [ r.artist ],
+        album: r.album,
+      }));
     } catch (error) {
       throw error;
     }
