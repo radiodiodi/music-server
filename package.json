@@ -17,6 +17,8 @@
     "koa-limit": "^1.0.2",
     "koa-router": "^7.4.0",
     "monk": "^6.0.5",
-    "musicmetadata": "^2.0.5"
+    "musicmetadata": "^2.0.5",
+    "mysql": "^2.15.0",
+    "promise-mysql": "^3.2.1"
   }
 }

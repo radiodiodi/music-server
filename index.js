@@ -2,9 +2,7 @@ require('dotenv').config();
 
 const path = require('path');
 const util = require('util');
-const models = require('./models');
-const parser = require('./parser');
-const watcher = require('./watcher');
+const Song = require('./models').Song;
 const utils = require('./utils');
 const Koa = require('koa');
 const Router = require('koa-router');
@@ -16,18 +14,10 @@ const router = new Router();
 
 const FRONTEND_URL = process.env.FRONTEND_URL;
 
-const stripFields = data => {
-  return {
-    title: data.title,
-    artist: data.artist,
-    album: data.album,
-  };
-}
-
 router.get('/', async ctx => {
-  const data = await models.library.find({}, { limit: 50 });
+  const data = await Song.byTitle('');
   ctx.body = JSON.stringify({
-    results: data.map(song => stripFields(song))
+    results: data,
   });
   ctx.type = 'application/json';
 });
@@ -35,11 +25,9 @@ router.get('/', async ctx => {
 router.get('/artist/:artist', async ctx => {
   const artist = ctx.params.artist;
   utils.info(`Querying for artist "${artist}".`)
-  const data = await models.library.find({
-    artist: new RegExp(artist, 'i')
-  }, { limit: 50 });
+  const data = await Song.byArtist(artist);
   ctx.body = JSON.stringify({
-    results: data.map(song => stripFields(song))
+    results: data,
   });  
   ctx.type = 'application/json';
 });
@@ -47,11 +35,9 @@ router.get('/artist/:artist', async ctx => {
 router.get('/title/:title', async ctx => {
   const title = ctx.params.title;
   utils.info(`Querying for title "${title}".`)
-  const data = await models.library.find({
-    title: new RegExp(title, 'i')
-  }, { limit: 50 });
+  const data = await Song.byTitle(title);
   ctx.body = JSON.stringify({
-    results: data.map(song => stripFields(song))
+    results: data,
   });  
   ctx.type = 'application/json';
 });
@@ -59,11 +45,9 @@ router.get('/title/:title', async ctx => {
 router.get('/album/:album', async ctx => {
   const album = ctx.params.album;
   utils.info(`Querying for album "${album}".`)
-  const data = await models.library.find({
-    album: new RegExp(album, 'i'),
-  }, { limit: 50 });
+  const data = await Song.byAlbum(album);
   ctx.body = JSON.stringify({
-    results: data.map(song => stripFields(song))
+    results: data,
   });
   ctx.type = 'application/json';
 });
@@ -87,8 +71,6 @@ app.use(async (ctx, next) => {
     utils.error(`${ctx.status} ${ctx.method} ${ctx.url} - ${ms}ms`);
   }
 });
-
-watcher();
 
 app
   .use(cors({

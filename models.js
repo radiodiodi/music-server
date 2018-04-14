@@ -1,17 +1,80 @@
-const monk = require('monk');
+const mysql = require('promise-mysql');
+const utils = require('./utils');
 
-const mongo_db = `${process.env.MONGODB_HOST}/${process.env.MONGODB_DB}`;
-console.log(`MongoDB DB: ${mongo_db}`);
-const db = monk(mongo_db);
-const library = db.get('library');
+const connect = async () => {
+  return await mysql.createConnection({
+    host: process.env.MYSQL_HOST,
+    user: process.env.MYSQL_USER,
+    password: process.env.MYSQL_PASS,
+    database: process.env.MYSQL_DB,
+  });
+}
 
-library.ensureIndex({
-  title: 1,
-  artist: 1,
-  album: 1,
-  filePath: 1,
-});
+const initialize = async () => {
+  const connection = await connect();
+  utils.info('DB connection test OK.');
+
+  try {
+    const { results, fields } = await connection.query('CREATE TABLE IF NOT EXISTS songs (id MEDIUMINT NOT NULL AUTO_INCREMENT, title VARCHAR(255), artist VARCHAR(255), album VARCHAR(255), PRIMARY KEY (id))');
+    utils.info('Table "songs" OK.');
+  } catch (error) {
+    throw error;
+  }
+
+  try {
+    const { results, fields } = await connection.query('SELECT 1 + 1 FROM songs');
+    utils.info('Query test OK.');
+  } catch (error) {
+    throw error;
+  }
+  
+  connection.end();
+}
+
+initialize();
+
+class Song {
+
+  /**
+   * Get song by title.
+   * @param {String} value 
+   */
+  static async byTitle(value) {
+    const conn = await connect();
+    try {
+      return await conn.query('SELECT title, artist, album FROM songs WHERE title LIKE ? LIMIT 50', `%${value}%`);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * Get song by artist.
+   * @param {String} value 
+   */
+  static async byArtist(value) {
+    const conn = await connect();
+    try {
+      return await conn.query('SELECT title, artist, album FROM songs WHERE artist LIKE ? LIMIT 50', `%${value}%`);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * Get song by album.
+   * @param {String} value 
+   */
+  static async byAlbum(value) {
+    const conn = await connect();
+    try {
+      return await conn.query('SELECT title, artist, album FROM songs WHERE album LIKE ? LIMIT 50', `%${value}%`);
+    } catch (error) {
+      throw error;
+    }
+  }
+}
 
 module.exports = {
-  library,
-};
+  Song,
+}
