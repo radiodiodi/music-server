@@ -50,6 +50,8 @@ class Song {
       }));
     } catch (error) {
       throw error;
+    } finally {
+      conn.end();
     }
   }
 
@@ -68,6 +70,8 @@ class Song {
       }));
     } catch (error) {
       throw error;
+    } finally {
+      conn.end();
     }
   }
 
@@ -86,6 +90,8 @@ class Song {
       }));
     } catch (error) {
       throw error;
+    } finally {
+      conn.end();
     }
   }
 }
